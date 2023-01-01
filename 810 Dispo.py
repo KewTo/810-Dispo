@@ -2,18 +2,23 @@ import pandas as pd
 import re
 
 
+# Grab location of file
 def file():
-    filepath = r'D:\Download\out_22047.csv'
+    filepath = r'C:\Users\kevinto\OneDrive - Intel Corporation\Desktop\out_22047.csv'
     return filepath
 
 
+# Read Excel file
 df = pd.read_csv(file())
 
 
+# Disposition option for various resist types and their conditions
 def condition(row):
     out = []
     if row.BLEMISH == 'Y':
         out.append("HOLD")
+    elif re.match(r'BEUVF(\d*)', row.LOT):
+        out.append('HOLD')
     elif row.BLEMISH == 'N':
         if re.match(r'.*PCAR', row.RESIST):
             if row.CLN_CNT > 2:
@@ -35,11 +40,24 @@ def condition(row):
                 out.append("TRASH")
             elif row.DAYS_AT_OPERATION < 15:
                 out.append("DOWNGRADE")
+    out = (", ".join(out))
     return out
 
 
-df['Dispo_Option'] = df.apply(condition, axis=1)
-df.to_csv(file(), sep='\t', encoding='utf-8')
+# Apply the conditions and add the option to the Excel files as a new column
+df['Dispo'] = df.apply(condition, axis=1)
+print(df)
+df.to_csv(file(), encoding='utf-8')
+
+
+# Save the Excel file with new disposition option
+def excel():
+    from openpyxl import load_workbook
+    wb = load_workbook(file())
+    ws = wb.active
+    ws.delete_cols(1)
+    wb.save(file())
+
 
 if __name__ == '__main__':
     pass
