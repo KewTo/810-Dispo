@@ -51,7 +51,7 @@ df.to_csv(file(), encoding='utf-8')
 
 
 # Save the Excel file with new disposition option
-def excel():
+def main():
     from openpyxl import load_workbook
     wb = load_workbook(file())
     ws = wb.active
@@ -60,4 +60,4 @@ def excel():
 
 
 if __name__ == '__main__':
-    pass
+    main()
