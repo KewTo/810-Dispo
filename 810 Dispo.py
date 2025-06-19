@@ -1,18 +1,16 @@
 import pandas as pd
 import re
+import numpy as np
 
 
-# Grab location of file
 def file():
-    filepath = r'C:\Users\kevinto\OneDrive - Intel Corporation\Desktop\out_22047.csv'
+    filepath = r'C:\Users\kevinto\OneDrive - Intel Corporation\Desktop\Python Dispatch.xlsx'
     return filepath
 
 
-# Read Excel file
-df = pd.read_csv(file())
+df = pd.read_excel(file())
 
 
-# Disposition option for various resist types and their conditions
 def condition(row):
     out = []
     if row.BLEMISH == 'Y':
@@ -44,14 +42,16 @@ def condition(row):
     return out
 
 
-# Apply the conditions and add the option to the Excel files as a new column
+df = df.replace(np.nan, '', regex=True)
+pd.set_option('display.show_dimensions', False)
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', None)
 df['Dispo'] = df.apply(condition, axis=1)
 print(df)
-df.to_csv(file(), encoding='utf-8')
 
 
-# Save the Excel file with new disposition option
-def main():
+def excel():
     from openpyxl import load_workbook
     wb = load_workbook(file())
     ws = wb.active
